@@ -1,5 +1,5 @@
+use super::unix::now_unix;
 use serde::{Deserialize, Serialize};
-use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum Status {
@@ -27,11 +27,4 @@ impl State {
             started_at_unix: None,
         }
     }
-}
-
-fn now_unix() -> u64 {
-    SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .unwrap()
-        .as_secs()
 }

@@ -1,7 +1,7 @@
 use crate::runtime::Result;
 use std::path::Path;
 
-use crate::linux::isolation::{
+use super::isolation::{
     chdir_to_container_root, detach_and_remove_old_root, ensure_rootfs_is_mountpoint,
     enter_mount_and_uts_namespaces, make_mounts_private, mount_minimal_dev, mount_proc,
     pivot_root_into, set_container_hostname,
