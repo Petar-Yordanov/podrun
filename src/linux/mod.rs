@@ -1,2 +1,2 @@
-mod isolation;
+pub mod isolation;
 pub mod setup;

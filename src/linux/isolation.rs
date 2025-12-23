@@ -80,6 +80,7 @@ pub fn detach_and_remove_old_root() -> Result<()> {
     Ok(())
 }
 
-fn nix_to_io<E: std::fmt::Display>(e: E) -> io::Error {
+// TODO: Separate into a separate file
+pub fn nix_to_io<E: std::fmt::Display>(e: E) -> io::Error {
     io::Error::new(io::ErrorKind::Other, e.to_string())
 }

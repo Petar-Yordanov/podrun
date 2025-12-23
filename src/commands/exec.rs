@@ -9,8 +9,9 @@ pub fn cmd_exec(
 ) -> Result<()> {
     let env = parse_env_kv(env)?;
     let c = Container::open(id)?;
-    let pid = c.exec(argv, env, cwd)?;
-    println!("exec pid={pid}");
+    let exit_code = c.exec(argv, env, cwd)?;
+    println!("exitCode={exit_code}");
+
     Ok(())
 }
 

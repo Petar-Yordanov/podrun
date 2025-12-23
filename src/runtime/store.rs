@@ -36,6 +36,10 @@ impl Store {
     pub fn save_state(&self, id: &str, state: &State) -> Result<()> {
         write_json(self.root.join(id).join("state.json"), state)
     }
+
+    pub fn dir(&self, id: &str) -> PathBuf {
+        self.root.join(id)
+    }
 }
 
 fn write_json<T: serde::Serialize>(path: PathBuf, v: &T) -> Result<()> {
