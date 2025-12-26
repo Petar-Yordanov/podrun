@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: "1"
+
+jobs:
+  build_test:
+    name: ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install deps (Ubuntu)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            ca-certificates curl \
+            docker.io
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Build (debug)
+        run: cargo build --all-targets --all-features
+
+      - name: Smoke test CLI (create/start/exec/wait/kill/delete)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          BIN=./target/debug/podrun
+          ROOTFS=/tmp/ci-rootfs
+
+          if [ ! -x "$BIN" ]; then
+            echo "Binary not found: $BIN"
+            ls -la ./target/debug || true
+            exit 1
+          fi
+
+          rm -rf "$ROOTFS"
+          mkdir -p "$ROOTFS"
+
+          docker pull ubuntu:24.04
+          cid=$(docker create ubuntu:24.04)
+          docker export "$cid" | sudo tar -C "$ROOTFS" -xf -
+          docker rm "$cid"
+
+          test -f "$ROOTFS/etc/os-release"
+
+          sudo "$BIN" create e1 --rootfs "$ROOTFS" -- /usr/bin/sleep 1000000
+          sudo "$BIN" start e1
+          sudo "$BIN" exec e1 -- /usr/bin/head -n 2 /etc/os-release
+          sudo "$BIN" exec e1 --env FOO=bar --cwd /tmp -- /usr/bin/sh -c 'pwd; echo $FOO; /usr/bin/ls -la'
+          sudo "$BIN" kill e1
+          sudo "$BIN" delete e1
+
+          sudo "$BIN" create w1 --rootfs "$ROOTFS" -- /usr/bin/sleep 1
+          sudo "$BIN" start w1
+          sudo "$BIN" wait w1
+          sudo "$BIN" delete w1
