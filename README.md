@@ -1,14 +1,16 @@
+<a id="readme-top"></a>
+
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
+  <a href="https://github.com/Petar-Yordanov/podrun">
+    <img src="assets/image.jpeg" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Best-README-Template</h3>
+  <h3 align="center">PodRun</h3>
 
   <p align="center">
-    An awesome README template to jumpstart your projects!
+    Pod Run is a low-level container runtime. 
   </p>
 </div>
 
@@ -38,10 +40,6 @@
 
 <!-- ABOUT THE PROJECT -->
 ## About The Project
-
-[![PodRun][product-screenshot]](https://github.com/Petar-Yordanov/podrun)
-
-[product-screenshot]: assets/image.jpeg
 
 Pod Run is a low-level, rootful (local) container runtime written in Rust. It focuses on the core container lifecycle, a “minimum viable container feel,” and a small set of practical features (state, logs, listing, and basic resource limits) without trying to be a full orchestration system.
 
