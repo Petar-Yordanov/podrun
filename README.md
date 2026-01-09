@@ -43,7 +43,12 @@
 
 Pod Run is a low-level, rootful (local) container runtime written in Rust. It focuses on the core container lifecycle, a “minimum viable container feel,” and a small set of practical features (state, logs, listing, and basic resource limits) without trying to be a full orchestration system.
 
+<div align="center">
+
 [![CI](https://github.com/Petar-Yordanov/vmmon/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Petar-Yordanov/vmmon/actions/workflows/build.yml)
+
+</div>
+
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
