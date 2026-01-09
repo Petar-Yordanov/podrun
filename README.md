@@ -45,7 +45,7 @@ Pod Run is a low-level, rootful (local) container runtime written in Rust. It fo
 
 <div align="center">
 
-[![CI](https://github.com/Petar-Yordanov/podrun/actions/workflows/build.yml/badge.svg)](https://github.com/Petar-Yordanov/podrun/actions/workflows/build.yml)
+[![CI](https://github.com/Petar-Yordanov/podrun/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/Petar-Yordanov/podrun/actions/workflows/build.yml)
 
 </div>
 
