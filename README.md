@@ -4,7 +4,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/Petar-Yordanov/podrun">
-    <img src="assets/image.jpeg" alt="Logo" width="80" height="80">
+    <img src="assets/image.jpeg" alt="Logo" width="200" height="200">
   </a>
 
   <h3 align="center">PodRun</h3>
