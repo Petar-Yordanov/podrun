@@ -51,7 +51,7 @@ jobs:
       - name: Build (debug)
         run: cargo build --all-targets --all-features
 
-      - name: Smoke test CLI (create/start/exec/wait/kill/delete)
+      - name: Smoke test CLI
         shell: bash
         run: |
           set -euo pipefail
@@ -75,14 +75,55 @@ jobs:
 
           test -f "$ROOTFS/etc/os-release"
 
+          # create -> state/list -> start -> state/list -> exec -> kill -> state/list -> delete
           sudo "$BIN" create e1 --rootfs "$ROOTFS" -- /usr/bin/sleep 1000000
+
+          out=$(sudo "$BIN" state e1)
+          echo "$out" | grep -q "status: Created"
+          out=$(sudo "$BIN" list)
+          echo "$out" | grep -qE "^e1[[:space:]]+Created"
+
           sudo "$BIN" start e1
+
+          out=$(sudo "$BIN" state e1)
+          echo "$out" | grep -q "status: Running"
+          echo "$out" | grep -q "pid_alive: true"
+          out=$(sudo "$BIN" list)
+          echo "$out" | grep -qE "^e1[[:space:]]+Running"
+
           sudo "$BIN" exec e1 -- /usr/bin/head -n 2 /etc/os-release
           sudo "$BIN" exec e1 --env FOO=bar --cwd /tmp -- /usr/bin/sh -c 'pwd; echo $FOO; /usr/bin/ls -la'
-          sudo "$BIN" kill e1
+
+          sudo "$BIN" kill e1 15
+
+          out=$(sudo "$BIN" state e1)
+          echo "$out" | grep -q "status: Stopped"
+          echo "$out" | grep -q "pid: None"
+          out=$(sudo "$BIN" list)
+          echo "$out" | grep -qE "^e1[[:space:]]+Stopped"
+
           sudo "$BIN" delete e1
 
+          # create -> start -> wait -> state/list -> delete
           sudo "$BIN" create w1 --rootfs "$ROOTFS" -- /usr/bin/sleep 1
           sudo "$BIN" start w1
           sudo "$BIN" wait w1
+
+          out=$(sudo "$BIN" state w1)
+          echo "$out" | grep -q "status: Stopped"
+          out=$(sudo "$BIN" list)
+          echo "$out" | grep -qE "^w1[[:space:]]+Stopped"
+
           sudo "$BIN" delete w1
+
+          # auto-refresh (start -> exits -> state/list flips to Stopped without wait/kill)
+          sudo "$BIN" create short --rootfs "$ROOTFS" -- /usr/bin/sh -c "sleep 1"
+          sudo "$BIN" start short
+          sleep 2
+
+          out=$(sudo "$BIN" state short)
+          echo "$out" | grep -q "status: Stopped"
+          out=$(sudo "$BIN" list)
+          echo "$out" | grep -qE "^short[[:space:]]+Stopped"
+
+          sudo "$BIN" delete short

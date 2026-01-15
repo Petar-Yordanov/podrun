@@ -21,7 +21,7 @@ pub enum Cmd {
     },
     Kill {
         id: String,
-        #[arg(long, default_value_t = 15)]
+        #[arg(value_name = "SIGNAL", default_value_t = 15)]
         signal: i32,
     },
     Delete {
@@ -40,4 +40,10 @@ pub enum Cmd {
         #[arg(last = true, required = true)]
         argv: Vec<String>,
     },
+    State {
+        id: String,
+        #[arg(long)]
+        json: bool,
+    },
+    List,
 }
