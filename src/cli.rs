@@ -40,4 +40,10 @@ pub enum Cmd {
         #[arg(last = true, required = true)]
         argv: Vec<String>,
     },
+    State {
+        id: String,
+        #[arg(long)]
+        json: bool,
+    },
+    List,
 }

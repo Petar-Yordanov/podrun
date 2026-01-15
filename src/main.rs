@@ -14,6 +14,8 @@ fn main() -> runtime::Result<()> {
         cli::Cmd::Delete { id } => commands::delete::cmd_delete(id)?,
         cli::Cmd::Wait { id } => commands::wait::cmd_wait(id)?,
         cli::Cmd::Exec { id, argv, env, cwd } => commands::exec::cmd_exec(id, argv, env, cwd)?,
+        cli::Cmd::State { id, json } => commands::state::cmd_state(id, json)?,
+        cli::Cmd::List => commands::list::cmd_list()?,
     }
     Ok(())
 }

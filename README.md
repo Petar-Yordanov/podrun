@@ -113,10 +113,10 @@ Pod Run is a rootful, local container runtime. You’ll build the podrun binary,
 2. Build
    ```sh
    # Debug
-   cargo build --all-targets --all-features
+   cargo build
 
    # RElease
-   cargo build --release --all-features
+   cargo build --release
    ```
 3. Create a rootfs via Docker export
    ```js
@@ -144,23 +144,29 @@ Create -> Start -> Exec -> Kill -> Delete
 BIN=./target/debug/podrun
 ROOTFS=/tmp/podrun-rootfs
 
-# Create a container named "e1" that runs sleep as init
+# Create
 sudo "$BIN" create e1 --rootfs "$ROOTFS" -- /usr/bin/sleep 1000000
 
-# Start init in new namespaces
+# Before start: should be Created, no pid
+sudo "$BIN" state e1
+sudo "$BIN" list
+
+# Start
 sudo "$BIN" start e1
 
-# Exec a command inside the container (exit code is propagated)
-sudo "$BIN" exec e1 -- /usr/bin/head -n 2 /etc/os-release
+# After start: should be Running + pid + started_at_unix set
+sudo "$BIN" state e1
+sudo "$BIN" state e1 --json
+sudo "$BIN" list
 
-# Exec with env and cwd
-sudo "$BIN" exec e1 --env FOO=bar --cwd /tmp -- /usr/bin/sh -c 'pwd; echo $FOO; /usr/bin/ls -la'
-
-# Stop the container (signal init)
+# Kill (or wait) then verify it flips to Stopped and clears pid
 sudo "$BIN" kill e1
+sudo "$BIN" state e1
+sudo "$BIN" list
 
-# Remove container metadata from the store
+# Cleanup
 sudo "$BIN" delete e1
+sudo "$BIN" list
 ```
 
 Wait for init to exit
@@ -194,8 +200,8 @@ sudo "$BIN" delete w1
 - [ ] PID namespace
 
 ### Observability
-- [ ] `state` - show status + pid + timestamps (and verify pid is alive)
-- [ ] `list` - list containers from the store
+- [x] `state` - show status + pid + timestamps (and verify pid is alive)
+- [x] `list` - list containers from the store
 - [ ] `logs` - capture init stdout/stderr to file
 - [ ] `logs -f` - follow logs (tail)
 

@@ -1,8 +1,8 @@
 use super::unix::now_unix;
 use crate::linux::isolation::nix_to_io;
 use crate::linux::setup::ContainerSetup;
-use crate::runtime::state::Status;
-use crate::runtime::{Result, RuntimeError, spec::Spec, state::State, store::Store};
+use crate::runtime::state::{State, Status};
+use crate::runtime::{Result, RuntimeError, spec::Spec, store::Store};
 use nix::sched::CloneFlags;
 use nix::sys::signal::{self};
 use nix::unistd::Pid;
@@ -296,6 +296,20 @@ impl Container {
 
         let st = cmd.status()?;
         Ok(st.code().unwrap_or(0))
+    }
+
+    pub fn refresh_state(&mut self) -> Result<()> {
+        if matches!(self.state.status, Status::Running) {
+            match self.state.pid {
+                Some(pid) if Self::proc_exists(pid) => { /* still alive */ }
+                _ => {
+                    self.state.status = Status::Stopped;
+                    self.state.pid = None;
+                    self.store.save_state(&self.id, &self.state)?;
+                }
+            }
+        }
+        Ok(())
     }
 
     fn setns_file(path: &std::path::Path, nstype: nix::sched::CloneFlags) -> io::Result<()> {

@@ -1,4 +1,5 @@
-use crate::runtime::{Result, spec::Spec, state::State};
+use crate::runtime::{Result, spec::Spec};
+use crate::runtime::state::State;
 use std::{fs, io, path::PathBuf};
 
 pub struct Store {
@@ -39,6 +40,24 @@ impl Store {
 
     pub fn dir(&self, id: &str) -> PathBuf {
         self.root.join(id)
+    }
+
+    pub fn list_ids(&self) -> crate::runtime::Result<Vec<String>> {
+        let root = self.root.clone();
+
+        if !root.exists() {
+            return Ok(vec![]);
+        }
+
+        let mut ids = Vec::new();
+        for entry in fs::read_dir(&root)? {
+            let entry = entry?;
+            if entry.file_type()?.is_dir() {
+                ids.push(entry.file_name().to_string_lossy().into_owned());
+            }
+        }
+        ids.sort();
+        Ok(ids)
     }
 }
 
