@@ -196,18 +196,10 @@ sudo "$BIN" delete w1
 ### Minimum container feel
 - [x] Mount namespace + `pivot_root` into `rootfs`
 - [x] UTS namespace (hostname)
-- [ ] Better `/dev` (devtmpfs + devpts so shells/tools behave)
-- [ ] PID namespace
 
 ### Observability
 - [x] `state` - show status + pid + timestamps (and verify pid is alive)
 - [x] `list` - list containers from the store
-- [ ] `logs` - capture init stdout/stderr to file
-- [ ] `logs -f` - follow logs (tail)
-
-### Limits
-- [ ] cgroups v2: `pids.max`
-- [ ] cgroups v2: `memory.max`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
